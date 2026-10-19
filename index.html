@@ -1,182 +1,705 @@
 <!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Thiệp 20/10 - Gửi em</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Dancing+Script:wght@500;600&family=Patrick+Hand&display=swap">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <!-- smooth stationery paper: very fine grain, barely-there tone drift -->
-    <filter id="paperFx" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" seed="2" result="n"/>
-      <feColorMatrix in="n" type="matrix" values="0.06 0 0 0 0.95  0.06 0 0 0 0.95  0.06 0 0 0 0.95  0 0 0 0 1" result="g"/>
-      <feBlend in="SourceGraphic" in2="g" mode="multiply" result="b1"/>
-      <feComposite in="b1" in2="SourceAlpha" operator="in"/>
-    </filter>
-
-    <!-- envelope paper: fine tooth only -->
-    <filter id="envGrain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="4" result="n"/>
-      <feColorMatrix in="n" type="matrix" values="0.12 0 0 0 0.9  0.12 0 0 0 0.9  0.12 0 0 0 0.9  0 0 0 0 1" result="g"/>
-      <feTurbulence type="fractalNoise" baseFrequency="0.01 0.014" numOctaves="2" seed="8" result="m"/>
-      <feColorMatrix in="m" type="matrix" values="0.08 0 0 0 0.94  0.08 0 0 0 0.94  0.08 0 0 0 0.94  0 0 0 0 1" result="mot"/>
-      <feBlend in="SourceGraphic" in2="g" mode="multiply" result="b1"/>
-      <feBlend in="b1" in2="mot" mode="multiply" result="b2"/>
-      <feComposite in="b2" in2="SourceAlpha" operator="in"/>
-    </filter>
-    <filter id="blur3" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter>
-
-    <!-- pen ink: tiny wobble so strokes are not vector-perfect -->
-    <filter id="inkFx" x="-5%" y="-10%" width="110%" height="120%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="6" result="w"/>
-      <feDisplacementMap in="SourceGraphic" in2="w" scale="1.4" xChannelSelector="R" yChannelSelector="G" result="d"/>
-      <feGaussianBlur in="d" stdDeviation="0.2"/>
-    </filter>
-
-    <!-- wax: lumpy edge, rounded body, glossy highlight -->
-    <filter id="waxFx" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="9" result="w"/>
-      <feDisplacementMap in="SourceGraphic" in2="w" scale="8" xChannelSelector="R" yChannelSelector="G" result="shape"/>
-      <feGaussianBlur in="shape" stdDeviation="3.2" result="bl"/>
-      <feSpecularLighting in="bl" surfaceScale="7" specularConstant="1" specularExponent="26" lighting-color="#ffe3dc" result="spec">
-        <feDistantLight azimuth="235" elevation="46"/>
-      </feSpecularLighting>
-      <feComposite in="spec" in2="shape" operator="in" result="specIn"/>
-      <feComposite in="shape" in2="specIn" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
-    </filter>
-    <filter id="pressFx" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="0.9" result="b"/>
-      <feSpecularLighting in="b" surfaceScale="3.5" specularConstant="0.9" specularExponent="14" lighting-color="#ffd9d0" result="s">
-        <feDistantLight azimuth="235" elevation="42"/>
-      </feSpecularLighting>
-      <feComposite in="s" in2="SourceAlpha" operator="in" result="sIn"/>
-      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sIn"/></feMerge>
-    </filter>
-
-    <!-- liner print inside the flap -->
-    <pattern id="linerPat" width="12" height="12" patternUnits="userSpaceOnUse">
-      <circle cx="3" cy="3" r="1" fill="#c9858c" fill-opacity="0.38"/>
-      <circle cx="9" cy="9" r="1" fill="#c9858c" fill-opacity="0.38"/>
-    </pattern>
-
-    <symbol id="bloom" viewBox="0 0 20 20">
-      <g fill="currentColor">
-        <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2"/>
-        <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(72 10 10)"/>
-        <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(144 10 10)"/>
-        <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(216 10 10)"/>
-        <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(288 10 10)"/>
-      </g>
-      <circle cx="10" cy="10" r="2" fill="#fff6ee"/>
-    </symbol>
-  </defs>
-</svg>
-
-<main class="stage" id="stage">
-  <div class="pocket" id="pocket">
-    <div class="env-back"></div>
-
-    <div class="slot">
-      <article class="card" id="card" aria-hidden="true">
-        <div class="paper"></div>
-        <div class="sheet">
-          <h1 class="kicker">Gửi em</h1>
-          <p class="eyebrow">CHÚC MỪNG NGÀY</p>
-          <p class="big">PHỤ NỮ VIỆT NAM</p>
-          <div class="divider" aria-hidden="true"><i></i></div>
-          <p class="date-script">20 · 10</p>
-          <p class="date-line">Thứ Ba, 20 tháng 10, 2026</p>
-          <ul class="wishes">
-            <li><svg aria-hidden="true"><use href="#bloom"/></svg><b>NỤ CƯỜI</b><span>Chúc em luôn vui vẻ, cười thật nhiều</span></li>
-            <li><svg aria-hidden="true"><use href="#bloom"/></svg><b>SỨC KHỎE</b><span>Chúc em luôn khỏe, học gì làm gì cũng thuận lợi</span></li>
-            <li><svg aria-hidden="true"><use href="#bloom"/></svg><b>ƯỚC MƠ</b><span>Chúc em từng bước làm được điều em mong</span></li>
-          </ul>
-          <p class="closing">Chúc em có một ngày 20/10 thật vui và nhận được thật nhiều hoa.</p>
-
-          <section class="note" id="note" hidden aria-live="polite">
-            <h2>Vài lời của anh</h2>
-            <p>Anh không giỏi viết lời hoa mỹ, chỉ muốn nói là em cứ vui vẻ và làm điều em thích nhé, có gì anh luôn ở đây.</p>
-          </section>
-        </div>
-      </article>
-    </div>
-
-    <svg class="front" viewBox="0 0 400 270" preserveAspectRatio="none" aria-hidden="true">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Thiệp 20/10 - Gửi em</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Dancing+Script:wght@500;600&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
       <defs>
-        <linearGradient id="frontL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ebc9c5"/><stop offset="1" stop-color="#e0b6b2"/></linearGradient>
-        <linearGradient id="frontR" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7c3bf"/><stop offset="1" stop-color="#dcb0ac"/></linearGradient>
-        <linearGradient id="frontB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4bdb9"/><stop offset="1" stop-color="#d4a29e"/></linearGradient>
-      </defs>
-      <g filter="url(#envGrain)">
-        <polygon points="0,0 200,150 0,270" fill="url(#frontL)"/>
-        <polygon points="400,0 200,150 400,270" fill="url(#frontR)"/>
-        <polygon points="0,266 200,146 400,266" fill="#6a3033" fill-opacity="0.3" filter="url(#blur3)"/>
-        <polygon points="0,270 200,150 400,270" fill="url(#frontB)"/>
-      </g>
-      <polyline points="0,0 200,150 400,0" fill="none" stroke="rgba(120,60,62,0.18)" stroke-width="1"/>
-      <polyline points="0,270 200,150 400,270" fill="none" stroke="rgba(120,60,62,0.28)" stroke-width="1"/>
-      <polyline points="0,271.3 200,151.3 400,271.3" fill="none" stroke="rgba(255,246,240,0.55)" stroke-width="1"/>
-    </svg>
+        <!-- smooth stationery paper: very fine grain, barely-there tone drift -->
+        <filter
+          id="paperFx"
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          color-interpolation-filters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.75"
+            numOctaves="3"
+            seed="2"
+            result="n"
+          />
+          <feColorMatrix
+            in="n"
+            type="matrix"
+            values="0.06 0 0 0 0.95  0.06 0 0 0 0.95  0.06 0 0 0 0.95  0 0 0 0 1"
+            result="g"
+          />
+          <feBlend in="SourceGraphic" in2="g" mode="multiply" result="b1" />
+          <feComposite in="b1" in2="SourceAlpha" operator="in" />
+        </filter>
 
-    <div class="deco" aria-hidden="true">
-      <div class="deco-to">
-        <p>Gửi em</p>
-        <svg class="scribble" viewBox="0 0 120 10"><path d="M2 6.2 C 24 3 52 7.4 78 4.6 S 104 3.6 118 5.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <svg class="heart" viewBox="0 0 16 15"><path d="M8.2 13.6 C 4 10.4 1.2 8 1.4 4.9 C 1.6 2.4 4.5 1.6 6.2 3.2 C 7 3.9 7.6 4.7 8 5.5 C 8.6 4.3 9.6 3.1 11.2 2.7 C 13.3 2.2 15 3.9 14.5 6.2 C 13.8 9 10.8 11.2 8.2 13.6 Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg>
-    </div>
+        <!-- envelope paper: fine tooth only -->
+        <filter
+          id="envGrain"
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          color-interpolation-filters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.85"
+            numOctaves="3"
+            seed="4"
+            result="n"
+          />
+          <feColorMatrix
+            in="n"
+            type="matrix"
+            values="0.12 0 0 0 0.9  0.12 0 0 0 0.9  0.12 0 0 0 0.9  0 0 0 0 1"
+            result="g"
+          />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.01 0.014"
+            numOctaves="2"
+            seed="8"
+            result="m"
+          />
+          <feColorMatrix
+            in="m"
+            type="matrix"
+            values="0.08 0 0 0 0.94  0.08 0 0 0 0.94  0.08 0 0 0 0.94  0 0 0 0 1"
+            result="mot"
+          />
+          <feBlend in="SourceGraphic" in2="g" mode="multiply" result="b1" />
+          <feBlend in="b1" in2="mot" mode="multiply" result="b2" />
+          <feComposite in="b2" in2="SourceAlpha" operator="in" />
+        </filter>
+        <filter id="blur3" x="-10%" y="-10%" width="120%" height="120%">
+          <feGaussianBlur stdDeviation="3.5" />
+        </filter>
 
-    <svg class="flap" viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="flapOut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eecfcb"/><stop offset="1" stop-color="#e3bcb8"/></linearGradient>
-        <linearGradient id="flapIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e2d8"/><stop offset="1" stop-color="#ecd3c9"/></linearGradient>
-      </defs>
-      <g filter="url(#envGrain)">
-        <polygon class="face-out" points="0,0 400,0 200,150" fill="url(#flapOut)"/>
-        <polygon class="face-in" points="0,0 400,0 200,150" fill="url(#flapIn)"/>
-        <polygon class="face-in" points="0,0 400,0 200,150" fill="url(#linerPat)"/>
-      </g>
-      <polyline class="face-out" points="0,-1.3 200,148.7 400,-1.3" fill="none" stroke="rgba(255,248,243,0.7)" stroke-width="1"/>
-      <polyline points="0,0 200,150 400,0" fill="none" stroke="rgba(120,60,62,0.25)" stroke-width="1"/>
-    </svg>
+        <!-- pen ink: tiny wobble so strokes are not vector-perfect -->
+        <filter id="inkFx" x="-5%" y="-10%" width="110%" height="120%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.05"
+            numOctaves="2"
+            seed="6"
+            result="w"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="w"
+            scale="1.4"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="d"
+          />
+          <feGaussianBlur in="d" stdDeviation="0.2" />
+        </filter>
 
-    <button class="seal" id="seal" type="button" aria-label="Chạm vào dấu sáp để mở thư">
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <defs>
-          <radialGradient id="wax" cx="38%" cy="32%" r="78%">
-            <stop offset="0" stop-color="#b8344c"/>
-            <stop offset="0.55" stop-color="#8f1f35"/>
-            <stop offset="1" stop-color="#5e1122"/>
-          </radialGradient>
-        </defs>
-        <g filter="url(#waxFx)">
-          <path d="M52 8 C67 7 81 15 88 28 C94 40 93 55 88 66 C83 79 72 88 58 91 C52 92 49 98 44 95 C41 92 42 90 38 90 C24 87 12 76 9 62 C6 49 9 36 17 24 C25 13 38 9 52 8 Z" fill="url(#wax)"/>
-          <path d="M90 31 C93 29 98 31 97 36 C96 40 92 41 90 39 C88.500 37 88.500 33 90 31 Z" fill="#8f1f35"/>
-        </g>
-        <g filter="url(#pressFx)">
-          <circle cx="50" cy="50" r="29" fill="none" stroke="#85192c" stroke-width="1.3"/>
-          <g transform="translate(50 50) scale(1.75) translate(-10 -10)" fill="#9b2640">
-            <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2"/>
-            <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(72 10 10)"/>
-            <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(144 10 10)"/>
-            <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(216 10 10)"/>
-            <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" transform="rotate(288 10 10)"/>
-            <circle cx="10" cy="10" r="2" fill="#7a1829"/>
+        <!-- wax: lumpy edge, rounded body, glossy highlight -->
+        <filter
+          id="waxFx"
+          x="-10%"
+          y="-10%"
+          width="120%"
+          height="120%"
+          color-interpolation-filters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.05"
+            numOctaves="2"
+            seed="9"
+            result="w"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="w"
+            scale="8"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="shape"
+          />
+          <feGaussianBlur in="shape" stdDeviation="3.2" result="bl" />
+          <feSpecularLighting
+            in="bl"
+            surfaceScale="7"
+            specularConstant="1"
+            specularExponent="26"
+            lighting-color="#ffe3dc"
+            result="spec"
+          >
+            <feDistantLight azimuth="235" elevation="46" />
+          </feSpecularLighting>
+          <feComposite in="spec" in2="shape" operator="in" result="specIn" />
+          <feComposite
+            in="shape"
+            in2="specIn"
+            operator="arithmetic"
+            k1="0"
+            k2="1"
+            k3="1"
+            k4="0"
+          />
+        </filter>
+        <filter
+          id="pressFx"
+          x="-8%"
+          y="-8%"
+          width="116%"
+          height="116%"
+          color-interpolation-filters="sRGB"
+        >
+          <feGaussianBlur in="SourceAlpha" stdDeviation="0.9" result="b" />
+          <feSpecularLighting
+            in="b"
+            surfaceScale="3.5"
+            specularConstant="0.9"
+            specularExponent="14"
+            lighting-color="#ffd9d0"
+            result="s"
+          >
+            <feDistantLight azimuth="235" elevation="42" />
+          </feSpecularLighting>
+          <feComposite in="s" in2="SourceAlpha" operator="in" result="sIn" />
+          <feMerge>
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="sIn" />
+          </feMerge>
+        </filter>
+
+        <!-- liner print inside the flap -->
+        <pattern
+          id="linerPat"
+          width="12"
+          height="12"
+          patternUnits="userSpaceOnUse"
+        >
+          <circle cx="3" cy="3" r="1" fill="#c9858c" fill-opacity="0.38" />
+          <circle cx="9" cy="9" r="1" fill="#c9858c" fill-opacity="0.38" />
+        </pattern>
+
+        <symbol id="bloom" viewBox="0 0 20 20">
+          <g fill="currentColor">
+            <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(72 10 10)"
+            />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(144 10 10)"
+            />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(216 10 10)"
+            />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(288 10 10)"
+            />
           </g>
-        </g>
-      </svg>
-    </button>
-  </div>
+          <circle cx="10" cy="10" r="2" fill="#fff6ee" />
+        </symbol>
 
-  <p class="hint" id="hint">Có một lá thư gửi em. Chạm vào dấu sáp để mở.</p>
-</main>
+        <!-- four-point sparkle -->
+        <symbol id="sparkle" viewBox="0 0 20 20">
+          <path
+            d="M10 0 C10.8 6 14 9.2 20 10 C14 10.8 10.8 14 10 20 C9.2 14 6 10.8 0 10 C6 9.2 9.2 6 10 0 Z"
+            fill="currentColor"
+          />
+        </symbol>
 
-<div class="petals" id="petals" aria-hidden="true"></div>
+        <!-- a bloom with a small leaf on each side -->
+        <symbol id="bloomleaf" viewBox="0 0 52 20">
+          <g fill="#9db48c">
+            <ellipse
+              cx="8"
+              cy="0"
+              rx="8"
+              ry="3"
+              transform="translate(18 10) rotate(195)"
+            />
+            <ellipse
+              cx="8"
+              cy="0"
+              rx="8"
+              ry="3"
+              transform="translate(34 10) rotate(-15)"
+            />
+          </g>
+          <use href="#bloom" x="16" y="0" width="20" height="20" />
+        </symbol>
 
-  <script src="script.js"></script>
-</body>
+        <!-- little flowering vine that hugs a corner (drawn for the top-left, flipped with CSS) -->
+        <symbol id="sprig" viewBox="0 0 60 60">
+          <path
+            d="M4 56 C5 34 20 14 54 6"
+            fill="none"
+            stroke="#8aa07a"
+            stroke-width="1.3"
+            stroke-linecap="round"
+          />
+          <g fill="#9db48c">
+            <ellipse
+              cx="5.500"
+              cy="0"
+              rx="5.500"
+              ry="2.200"
+              transform="translate(7.500 40) rotate(200)"
+            />
+            <ellipse
+              cx="5.500"
+              cy="0"
+              rx="5.500"
+              ry="2.200"
+              transform="translate(7.500 40) rotate(-35)"
+            />
+            <ellipse
+              cx="5.500"
+              cy="0"
+              rx="5.500"
+              ry="2.200"
+              transform="translate(16.600 25.700) rotate(235)"
+            />
+            <ellipse
+              cx="5.500"
+              cy="0"
+              rx="5.500"
+              ry="2.200"
+              transform="translate(16.600 25.700) rotate(15)"
+            />
+            <ellipse
+              cx="5.500"
+              cy="0"
+              rx="5.500"
+              ry="2.200"
+              transform="translate(32 14.100) rotate(255)"
+            />
+            <ellipse
+              cx="5.500"
+              cy="0"
+              rx="5.500"
+              ry="2.200"
+              transform="translate(32 14.100) rotate(5)"
+            />
+          </g>
+          <use
+            href="#bloom"
+            x="44"
+            y="0"
+            width="14"
+            height="14"
+            style="color: #d9798f"
+          />
+          <use
+            href="#bloom"
+            x="0"
+            y="48"
+            width="11"
+            height="11"
+            style="color: #e8a1b2"
+          />
+        </symbol>
+      </defs>
+    </svg>
+
+    <main class="stage" id="stage">
+      <div class="pocket" id="pocket">
+        <div class="env-back"></div>
+
+        <div class="slot">
+          <article class="card" id="card" aria-hidden="true">
+            <div class="paper"></div>
+            <div class="sheet">
+              <span class="tape tl" aria-hidden="true"></span>
+              <span class="tape tr" aria-hidden="true"></span>
+              <svg class="corner bl" aria-hidden="true">
+                <use href="#sprig" />
+              </svg>
+              <svg class="corner br" aria-hidden="true">
+                <use href="#sprig" />
+              </svg>
+              <svg class="mini l" aria-hidden="true"><use href="#bloom" /></svg>
+              <svg class="mini r" aria-hidden="true"><use href="#bloom" /></svg>
+              <h1 class="kicker">Gửi em</h1>
+              <p class="eyebrow">CHÚC MỪNG NGÀY</p>
+              <p class="big">PHỤ NỮ VIỆT NAM</p>
+              <div class="divider" aria-hidden="true"><i></i></div>
+              <div class="date-wrap">
+                <svg class="spark" aria-hidden="true">
+                  <use href="#sparkle" />
+                </svg>
+                <p class="date-script">20 · 10</p>
+                <svg class="spark s2" aria-hidden="true">
+                  <use href="#sparkle" />
+                </svg>
+              </div>
+              <p class="date-line">Thứ Ba, 20 tháng 10, 2026</p>
+              <ul class="wishes">
+                <li>
+                  <svg aria-hidden="true"><use href="#bloomleaf" /></svg
+                  ><b>NỤ CƯỜI</b
+                  ><span>Chúc em luôn vui vẻ, cười thật nhiều</span>
+                </li>
+                <li>
+                  <svg aria-hidden="true"><use href="#bloomleaf" /></svg
+                  ><b>SỨC KHỎE</b
+                  ><span>Chúc em luôn khỏe, học gì làm gì cũng thuận lợi</span>
+                </li>
+                <li>
+                  <svg aria-hidden="true"><use href="#bloomleaf" /></svg
+                  ><b>ƯỚC MƠ</b
+                  ><span>Chúc em từng bước làm được điều em mong</span>
+                </li>
+              </ul>
+              <p class="closing">
+                Chúc em có một ngày 20/10 thật vui và nhận được thật nhiều hoa.
+              </p>
+
+              <section
+                class="note"
+                id="note"
+                aria-hidden="true"
+                aria-live="polite"
+              >
+                <h2>Vài lời của anh</h2>
+                <p>
+                  Anh không giỏi viết lời hoa mỹ, chỉ muốn nói là em cứ vui vẻ
+                  và làm điều em thích nhé, có gì anh luôn ở đây.
+                </p>
+              </section>
+            </div>
+          </article>
+        </div>
+
+        <svg
+          class="front"
+          viewBox="0 0 400 270"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="frontL" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ebc9c5" />
+              <stop offset="1" stop-color="#e0b6b2" />
+            </linearGradient>
+            <linearGradient id="frontR" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#e7c3bf" />
+              <stop offset="1" stop-color="#dcb0ac" />
+            </linearGradient>
+            <linearGradient id="frontB" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#e4bdb9" />
+              <stop offset="1" stop-color="#d4a29e" />
+            </linearGradient>
+          </defs>
+          <g filter="url(#envGrain)">
+            <polygon points="0,0 200,150 0,270" fill="url(#frontL)" />
+            <polygon points="400,0 200,150 400,270" fill="url(#frontR)" />
+            <polygon
+              points="0,266 200,146 400,266"
+              fill="#6a3033"
+              fill-opacity="0.3"
+              filter="url(#blur3)"
+            />
+            <polygon points="0,270 200,150 400,270" fill="url(#frontB)" />
+          </g>
+          <polyline
+            points="0,0 200,150 400,0"
+            fill="none"
+            stroke="rgba(120,60,62,0.18)"
+            stroke-width="1"
+          />
+          <polyline
+            points="0,270 200,150 400,270"
+            fill="none"
+            stroke="rgba(120,60,62,0.28)"
+            stroke-width="1"
+          />
+          <polyline
+            points="0,271.3 200,151.3 400,271.3"
+            fill="none"
+            stroke="rgba(255,246,240,0.55)"
+            stroke-width="1"
+          />
+        </svg>
+
+        <div class="deco" aria-hidden="true">
+          <!-- postage stamp with a little bloom, and a wavy postmark over it -->
+          <svg class="stamp" viewBox="0 0 44 54">
+            <rect width="44" height="54" fill="#fff8ee" />
+            <g fill="#e0b6b2">
+              <circle cx="0" cy="0" r="2" />
+              <circle cx="44" cy="0" r="2" />
+              <circle cx="0" cy="54" r="2" />
+              <circle cx="44" cy="54" r="2" />
+              <circle cx="4" cy="0" r="2" />
+              <circle cx="10" cy="0" r="2" />
+              <circle cx="16" cy="0" r="2" />
+              <circle cx="22" cy="0" r="2" />
+              <circle cx="28" cy="0" r="2" />
+              <circle cx="34" cy="0" r="2" />
+              <circle cx="40" cy="0" r="2" />
+              <circle cx="4" cy="54" r="2" />
+              <circle cx="10" cy="54" r="2" />
+              <circle cx="16" cy="54" r="2" />
+              <circle cx="22" cy="54" r="2" />
+              <circle cx="28" cy="54" r="2" />
+              <circle cx="34" cy="54" r="2" />
+              <circle cx="40" cy="54" r="2" />
+              <circle cx="0" cy="6" r="2" />
+              <circle cx="0" cy="12" r="2" />
+              <circle cx="0" cy="18" r="2" />
+              <circle cx="0" cy="24" r="2" />
+              <circle cx="0" cy="30" r="2" />
+              <circle cx="0" cy="36" r="2" />
+              <circle cx="0" cy="42" r="2" />
+              <circle cx="0" cy="48" r="2" />
+              <circle cx="44" cy="6" r="2" />
+              <circle cx="44" cy="12" r="2" />
+              <circle cx="44" cy="18" r="2" />
+              <circle cx="44" cy="24" r="2" />
+              <circle cx="44" cy="30" r="2" />
+              <circle cx="44" cy="36" r="2" />
+              <circle cx="44" cy="42" r="2" />
+              <circle cx="44" cy="48" r="2" />
+            </g>
+            <rect
+              x="5"
+              y="5"
+              width="34"
+              height="44"
+              fill="none"
+              stroke="#a8405c"
+              stroke-width="0.8"
+            />
+            <rect x="7.500" y="7.500" width="29" height="39" fill="#f6dfe2" />
+            <use
+              href="#bloom"
+              x="12"
+              y="14"
+              width="20"
+              height="20"
+              style="color: #a8405c"
+            />
+            <text
+              x="22"
+              y="42"
+              text-anchor="middle"
+              font-family="Cormorant Garamond, Georgia, serif"
+              font-size="6.500"
+              font-weight="600"
+              fill="#a8405c"
+            >
+              20 · 10
+            </text>
+          </svg>
+          <svg class="postmark" viewBox="0 0 80 44">
+            <g
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.2"
+              stroke-linecap="round"
+            >
+              <path d="M2 12 q4 -4 8 0 t8 0 t8 0 t8 0" />
+              <path d="M2 22 q4 -4 8 0 t8 0 t8 0 t8 0" />
+              <path d="M2 32 q4 -4 8 0 t8 0 t8 0 t8 0" />
+              <circle cx="58" cy="22" r="19" />
+              <circle cx="58" cy="22" r="14" stroke-width="0.8" />
+            </g>
+            <use
+              href="#bloom"
+              x="50"
+              y="14"
+              width="16"
+              height="16"
+              style="color: currentColor"
+            />
+          </svg>
+
+          <div class="deco-to">
+            <p>Gửi em</p>
+            <svg class="scribble" viewBox="0 0 120 10">
+              <path
+                d="M2 6.2 C 24 3 52 7.4 78 4.6 S 104 3.6 118 5.2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <svg class="heart" viewBox="0 0 16 15">
+            <path
+              d="M8.2 13.6 C 4 10.4 1.2 8 1.4 4.9 C 1.6 2.4 4.5 1.6 6.2 3.2 C 7 3.9 7.6 4.7 8 5.5 C 8.6 4.3 9.6 3.1 11.2 2.7 C 13.3 2.2 15 3.9 14.5 6.2 C 13.8 9 10.8 11.2 8.2 13.6 Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+
+        <svg
+          class="flap"
+          viewBox="0 0 400 150"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="flapOut" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#eecfcb" />
+              <stop offset="1" stop-color="#e3bcb8" />
+            </linearGradient>
+            <linearGradient id="flapIn" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f3e2d8" />
+              <stop offset="1" stop-color="#ecd3c9" />
+            </linearGradient>
+          </defs>
+          <g filter="url(#envGrain)">
+            <polygon
+              class="face-out"
+              points="0,0 400,0 200,150"
+              fill="url(#flapOut)"
+            />
+            <polygon
+              class="face-in"
+              points="0,0 400,0 200,150"
+              fill="url(#flapIn)"
+            />
+            <polygon
+              class="face-in"
+              points="0,0 400,0 200,150"
+              fill="url(#linerPat)"
+            />
+          </g>
+          <polyline
+            class="face-out"
+            points="0,-1.3 200,148.7 400,-1.3"
+            fill="none"
+            stroke="rgba(255,248,243,0.7)"
+            stroke-width="1"
+          />
+          <polyline
+            points="0,0 200,150 400,0"
+            fill="none"
+            stroke="rgba(120,60,62,0.25)"
+            stroke-width="1"
+          />
+        </svg>
+
+        <button
+          class="seal"
+          id="seal"
+          type="button"
+          aria-label="Chạm vào dấu sáp để mở thư"
+        >
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <radialGradient id="wax" cx="38%" cy="32%" r="78%">
+                <stop offset="0" stop-color="#b8344c" />
+                <stop offset="0.55" stop-color="#8f1f35" />
+                <stop offset="1" stop-color="#5e1122" />
+              </radialGradient>
+            </defs>
+            <g filter="url(#waxFx)">
+              <path
+                d="M52 8 C67 7 81 15 88 28 C94 40 93 55 88 66 C83 79 72 88 58 91 C52 92 49 98 44 95 C41 92 42 90 38 90 C24 87 12 76 9 62 C6 49 9 36 17 24 C25 13 38 9 52 8 Z"
+                fill="url(#wax)"
+              />
+              <path
+                d="M90 31 C93 29 98 31 97 36 C96 40 92 41 90 39 C88.500 37 88.500 33 90 31 Z"
+                fill="#8f1f35"
+              />
+            </g>
+            <g filter="url(#pressFx)">
+              <circle
+                cx="50"
+                cy="50"
+                r="29"
+                fill="none"
+                stroke="#85192c"
+                stroke-width="1.3"
+              />
+              <g
+                transform="translate(50 50) scale(1.75) translate(-10 -10)"
+                fill="#9b2640"
+              >
+                <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" />
+                <ellipse
+                  cx="10"
+                  cy="4.6"
+                  rx="2.6"
+                  ry="4.2"
+                  transform="rotate(72 10 10)"
+                />
+                <ellipse
+                  cx="10"
+                  cy="4.6"
+                  rx="2.6"
+                  ry="4.2"
+                  transform="rotate(144 10 10)"
+                />
+                <ellipse
+                  cx="10"
+                  cy="4.6"
+                  rx="2.6"
+                  ry="4.2"
+                  transform="rotate(216 10 10)"
+                />
+                <ellipse
+                  cx="10"
+                  cy="4.6"
+                  rx="2.6"
+                  ry="4.2"
+                  transform="rotate(288 10 10)"
+                />
+                <circle cx="10" cy="10" r="2" fill="#7a1829" />
+              </g>
+            </g>
+          </svg>
+        </button>
+
+        <!-- flowers and sparkles that overhang the envelope and spill onto the table -->
+        <div class="garnish" aria-hidden="true">
+          <svg class="g-sprig g-bl"><use href="#sprig" /></svg>
+          <svg class="g-sprig g-tr"><use href="#sprig" /></svg>
+          <svg class="g-bloomleaf"><use href="#bloomleaf" /></svg>
+          <svg class="g-spark a"><use href="#sparkle" /></svg>
+          <svg class="g-spark b"><use href="#sparkle" /></svg>
+          <svg class="g-spark c"><use href="#sparkle" /></svg>
+        </div>
+      </div>
+
+      <p class="hint" id="hint">
+        Có một lá thư gửi em. Chạm vào dấu sáp để mở.
+      </p>
+    </main>
+
+    <div class="petals" id="petals" aria-hidden="true"></div>
+
+    <script src="script.js"></script>
+  </body>
 </html>

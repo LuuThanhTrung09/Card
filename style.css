@@ -1,175 +1,791 @@
 /* Layout: a blush-pink paper envelope on a warm table, sealed with deep-red wax and addressed by hand. Tapping the seal lifts the flap, a smooth stationery card slides out and the envelope fades away. */
-  :root {
-    --bg: #efe4d8;
-    --bg-hi: #f8f0e7;
-    --paper: #fffbf5;
-    --ink: #4a2230;
-    --rose: #a8405c;
-    --rose-soft: rgba(168, 64, 92, 0.38);
-    --pen: #3b2a33;
-    --env-h: 270px;
-    --tuck: 60px;
-    --card-h: 640px;
-    --script: "Great Vibes", "Dancing Script", cursive;
-    --hand: "Dancing Script", "Segoe Script", cursive;
-    --hand-body: "Patrick Hand", "Segoe Print", cursive;
-    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-    --ease: cubic-bezier(0.3, 0.7, 0.2, 1);
-  }
-  * { box-sizing: border-box; }
-  html, body { min-height: 100%; }
-  body {
-    margin: 0;
-    background: var(--bg) radial-gradient(ellipse at 50% 20%, var(--bg-hi) 0%, var(--bg) 78%);
-    color: var(--ink);
-    font-family: var(--serif);
-    padding-block: 32px 56px;
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
-    overflow-x: hidden;
-  }
-  .stage {
-    width: 100%; max-width: 420px; margin: clamp(8px, 12vh, 110px) auto 0;
-    display: flex; flex-direction: column; gap: 26px;
-    transition: margin-top 1.1s var(--ease) 0.5s;
-  }
-  .stage.open { margin-top: 0; }
+:root {
+  --bg: #efe4d8;
+  --bg-hi: #f8f0e7;
+  --paper: #fffbf5;
+  --ink: #4a2230;
+  --rose: #a8405c;
+  --rose-soft: rgba(168, 64, 92, 0.38);
+  --pen: #3b2a33;
+  --env-h: 270px;
+  --tuck: 60px;
+  --card-h: 640px;
+  --script: "Great Vibes", "Dancing Script", cursive;
+  --hand: "Dancing Script", "Segoe Script", cursive;
+  --sage: #9db48c;
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --ease: cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  min-height: 100%;
+}
+body {
+  margin: 0;
+  /* a faint wallpaper of tiny blooms on the table, over the warm glow */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23c9858c' fill-opacity='.17'%3E%3Cg transform='translate(26 30) scale(.9)'%3E%3Cellipse cy='-5' rx='2.6' ry='4.2'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(72)'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(144)'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(216)'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(288)'/%3E%3C/g%3E%3Cg transform='translate(86 90) scale(.7)'%3E%3Cellipse cy='-5' rx='2.6' ry='4.2'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(72)'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(144)'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(216)'/%3E%3Cellipse cy='-5' rx='2.6' ry='4.2' transform='rotate(288)'/%3E%3C/g%3E%3Ccircle cx='88' cy='28' r='1.5'/%3E%3Ccircle cx='28' cy='88' r='1.5'/%3E%3Ccircle cx='60' cy='60' r='1'/%3E%3C/g%3E%3C/svg%3E")
+      0 0 / 120px 120px,
+    radial-gradient(ellipse at 50% 20%, var(--bg-hi) 0%, var(--bg) 78%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  padding-block: 32px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+.stage {
+  width: 100%;
+  max-width: 420px;
+  margin: clamp(8px, 12vh, 110px) auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  transition: margin-top 1.1s var(--ease) 0.5s;
+}
+.stage.open {
+  margin-top: 0;
+}
 
-  /* the envelope and the card share one box that grows when the card comes out */
-  .pocket { position: relative; height: var(--env-h); transition: height 1.1s var(--ease) 0.55s; }
-  .pocket.open { height: calc(var(--card-h) + var(--env-h) - var(--tuck)); }
+/* the envelope and the card share one box that grows when the card comes out */
+.pocket {
+  position: relative;
+  height: var(--env-h);
+  transition: height 1.1s var(--ease) 0.55s;
+}
+.pocket.open {
+  height: calc(var(--card-h) + var(--env-h) - var(--tuck));
+}
 
-  .env-back {
-    position: absolute; z-index: 0; left: -14px; right: -14px; bottom: 0; height: var(--env-h);
-    /* the patterned tissue liner you see inside once the flap is open */
-    background: radial-gradient(circle, rgba(201, 133, 140, 0.4) 1px, transparent 1.5px) 0 0 / 12px 12px,
-                linear-gradient(180deg, #ecd3c9 0%, #f3e2d8 100%);
-    border-radius: 2px;
-    box-shadow: 0 16px 28px rgba(90, 45, 45, 0.28);
-  }
+.env-back {
+  position: absolute;
+  z-index: 0;
+  left: -14px;
+  right: -14px;
+  bottom: 0;
+  height: var(--env-h);
+  /* the patterned tissue liner you see inside once the flap is open */
+  background:
+    radial-gradient(circle, rgba(201, 133, 140, 0.4) 1px, transparent 1.5px) 0
+      0 / 12px 12px,
+    linear-gradient(180deg, #ecd3c9 0%, #f3e2d8 100%);
+  border-radius: 2px;
+  box-shadow: 0 16px 28px rgba(90, 45, 45, 0.28);
+}
 
-  .slot {
-    position: absolute; z-index: 1; left: -40px; right: -40px; bottom: 0;
-    height: calc(var(--card-h) + 260px); padding: 0 40px; overflow: hidden;
-    display: flex; flex-direction: column; justify-content: flex-end; pointer-events: none;
-  }
-  .card {
-    position: relative; flex: none; will-change: transform;
-    filter: drop-shadow(0 8px 14px rgba(90, 45, 45, 0.25));
-    transform: translateY(calc(var(--card-h) * 0.95 - var(--env-h) + 44px)) scale(0.9);
-    transition: transform 1.1s var(--ease) 0.55s;
-  }
-  .pocket:not(.open) .card { visibility: hidden; }
-  .pocket.open .card { transform: translateY(calc(var(--tuck) - var(--env-h))) scale(1); pointer-events: auto; cursor: pointer; }
+.slot {
+  position: absolute;
+  z-index: 1;
+  left: -40px;
+  right: -40px;
+  bottom: 0;
+  height: calc(var(--card-h) + 260px);
+  padding: 0 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.card {
+  position: relative;
+  flex: none;
+  will-change: transform;
+  filter: drop-shadow(0 8px 14px rgba(90, 45, 45, 0.25));
+  transform: translateY(calc(var(--card-h) * 0.95 - var(--env-h) + 44px))
+    scale(0.9);
+  transition: transform 1.1s var(--ease) 0.55s;
+}
+.pocket:not(.open) .card {
+  visibility: hidden;
+}
+.pocket.open .card {
+  transform: translateY(calc(var(--tuck) - var(--env-h))) scale(1);
+  pointer-events: auto;
+  cursor: pointer;
+}
 
-  .paper { position: absolute; inset: 0; background: var(--paper); border-radius: 3px; filter: url(#paperFx); }
+.paper {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  border-radius: 3px;
+  filter: url(#paperFx);
+}
 
-  .sheet {
-    position: relative; padding: 56px 44px 50px; text-align: center; font-feature-settings: "lnum"; font-variant-numeric: lining-nums;
-    display: flex; flex-direction: column; align-items: center; gap: 14px;
-  }
-  /* a fine double keyline, like printed stationery */
-  .sheet::before, .sheet::after { content: ""; position: absolute; pointer-events: none; }
-  .sheet::before { inset: 12px; border: 1px solid var(--rose-soft); border-radius: 2px; }
-  .sheet::after { inset: 17px; border: 1px solid rgba(168, 64, 92, 0.16); border-radius: 1px; }
+.sheet {
+  position: relative;
+  padding: 56px 44px 76px;
+  text-align: center;
+  font-feature-settings: "lnum";
+  font-variant-numeric: lining-nums;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+/* a fine double keyline, like printed stationery */
+.sheet::before,
+.sheet::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.sheet::before {
+  inset: 12px;
+  border: 1px solid var(--rose-soft);
+  border-radius: 2px;
+}
+.sheet::after {
+  inset: 17px;
+  border: 1px solid rgba(168, 64, 92, 0.16);
+  border-radius: 1px;
+}
 
-  .kicker { font-family: var(--script); font-weight: 400; font-size: clamp(2.8rem, 12.5vw, 3.6rem); line-height: 1.05; margin: 0; color: var(--rose); }
-  .eyebrow { font-size: 0.95rem; letter-spacing: 0.24em; font-weight: 600; margin: 6px 0 0; }
-  .big { font-weight: 600; font-size: clamp(1.7rem, 8vw, 2.25rem); letter-spacing: 0.08em; line-height: 1.12; margin: 0; text-wrap: balance; }
-  .divider { display: flex; align-items: center; gap: 10px; width: 70%; color: var(--rose); }
-  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: 0.55; }
-  .divider i { width: 7px; height: 7px; background: currentColor; transform: rotate(45deg); display: block; }
-  .date-script { font-family: var(--script); font-size: clamp(2.6rem, 11.5vw, 3.3rem); line-height: 1; margin: 0; color: var(--rose); }
-  .date-line { font-size: 1.15rem; font-weight: 600; letter-spacing: 0.04em; margin: -4px 0 0; }
-  .wishes { display: flex; flex-direction: column; gap: 22px; width: 100%; margin: 6px 0 0; padding: 0; list-style: none; }
-  .wishes li { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-  .wishes svg { width: 15px; height: 15px; color: var(--rose); }
-  .wishes b { font-weight: 600; font-size: 0.95rem; letter-spacing: 0.22em; }
-  .wishes span { font-size: 1.2rem; font-weight: 500; line-height: 1.3; text-wrap: balance; max-width: 13.5em; }
-  .closing { font-weight: 500; font-size: 1.25rem; line-height: 1.38; max-width: 16em; margin: 6px 0 0; text-wrap: balance; font-style: italic; }
+.kicker {
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(2.8rem, 12.5vw, 3.6rem);
+  line-height: 1.05;
+  margin: 0;
+  color: var(--rose);
+}
+.eyebrow {
+  font-size: 0.95rem;
+  letter-spacing: 0.24em;
+  font-weight: 600;
+  margin: 6px 0 0;
+}
+.big {
+  font-weight: 600;
+  font-size: clamp(1.7rem, 8vw, 2.25rem);
+  letter-spacing: 0.08em;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 70%;
+  color: var(--rose);
+}
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+.divider i {
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  transform: rotate(45deg);
+  display: block;
+}
+.date-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.date-script {
+  font-family: var(--script);
+  font-size: clamp(2.6rem, 11.5vw, 3.3rem);
+  line-height: 1;
+  margin: 0;
+  color: var(--rose);
+}
+.spark {
+  width: 14px;
+  height: 14px;
+  color: var(--rose);
+  opacity: 0.7;
+  animation: twinkle 2.8s ease-in-out infinite;
+}
+.spark.s2 {
+  width: 10px;
+  height: 10px;
+  animation-delay: 1.2s;
+  transform: translateY(-10px);
+}
+.date-wrap .spark:first-child {
+  transform: translateY(8px);
+}
+.date-line {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: -4px 0 0;
+}
+.wishes {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.wishes li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.wishes svg {
+  width: 46px;
+  height: 18px;
+  color: var(--rose);
+}
+.wishes b {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.22em;
+}
+.wishes span {
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-wrap: balance;
+  max-width: 13.5em;
+}
+.closing {
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1.38;
+  max-width: 16em;
+  margin: 6px 0 0;
+  text-wrap: balance;
+  font-style: italic;
+}
 
-  /* the hand-written P.S. lives on the card itself */
-  .note { width: 100%; margin-top: 10px; padding-top: 18px; border-top: 1px dashed var(--rose-soft); color: var(--pen); animation: rise 0.7s ease both; }
-  .note[hidden] { display: none !important; }
-  .note h2 { font-family: var(--hand); font-weight: 600; font-size: 1.9rem; line-height: 1.1; margin: 0 0 6px; color: var(--rose); }
-  .note p { margin: 0 auto; max-width: 19em; font-family: var(--hand-body); font-weight: 400; font-size: 1.32rem; line-height: 1.38; text-wrap: balance; }
+/* the hand-written P.S. lives on the card itself */
+/* the note keeps its space from the start, so showing it never changes the card's size: it only fades and rises */
+.note {
+  width: 100%;
+  margin-top: 10px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--rose-soft);
+  color: var(--pen);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.note.show {
+  opacity: 1;
+}
+.note > h2,
+.note > p {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s var(--ease);
+}
+.note.show > h2 {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.15s;
+}
+.note.show > p {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.45s;
+}
+.note {
+  position: relative;
+  margin-top: 16px;
+}
+/* a small heart sitting on the dashed line */
+.note::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 30px;
+  height: 18px;
+  transform: translateX(-50%);
+  background: var(--paper)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 15'%3E%3Cpath d='M8.2 13.6C4 10.4 1.2 8 1.4 4.9 1.6 2.4 4.5 1.6 6.2 3.2 7 3.900 7.6 4.700 8 5.500 8.600 4.300 9.600 3.100 11.200 2.700 13.300 2.200 15 3.900 14.500 6.200 13.800 9 10.800 11.200 8.200 13.600Z' fill='%23d9798f'/%3E%3C/svg%3E")
+    center / 13px no-repeat;
+}
+.note h2 {
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 9.5vw, 2.7rem);
+  line-height: 1.1;
+  margin: 0 0 4px;
+  color: var(--rose);
+}
+.note p {
+  margin: 0 auto;
+  max-width: 16em;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 1.2rem;
+  line-height: 1.3;
+  color: var(--ink);
+  text-wrap: balance;
+}
 
-  /* once the card is out, the envelope fades away and only the card stays */
-  .env-back, .front, .deco, .flap { transition: opacity 0.6s ease, transform 0.6s ease; }
-  .pocket.leaving .env-back, .pocket.leaving .front, .pocket.leaving .deco, .pocket.leaving .flap { opacity: 0; }
-  .pocket.leaving .env-back, .pocket.leaving .front, .pocket.leaving .deco { transform: translateY(36px); }
-  .pocket.done { height: auto; transition: none; }
-  .pocket.done .slot { position: static; height: auto; padding: 0; overflow: visible; }
-  .pocket.done .card { transform: none; transition: none; }
-  .pocket.done .env-back, .pocket.done .front, .pocket.done .deco, .pocket.done .flap, .pocket.done .seal { display: none; }
+/* washi tape, little leafy vines and tiny blooms on the card */
+.tape {
+  position: absolute;
+  z-index: 1;
+  width: 82px;
+  height: 24px;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(90, 45, 45, 0.18);
+  clip-path: polygon(
+    0 8%,
+    4% 0,
+    8% 10%,
+    12% 0,
+    88% 0,
+    92% 10%,
+    96% 0,
+    100% 8%,
+    100% 92%,
+    96% 100%,
+    92% 90%,
+    88% 100%,
+    12% 100%,
+    8% 90%,
+    4% 100%,
+    0 92%
+  );
+}
+.tape.tl {
+  top: 4px;
+  left: -24px;
+  transform: rotate(-38deg);
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(240, 170, 188, 0.82) 0 7px,
+    rgba(255, 238, 240, 0.82) 7px 14px
+  );
+}
+.tape.tr {
+  top: 4px;
+  right: -24px;
+  transform: rotate(38deg);
+  background:
+    radial-gradient(circle, rgba(217, 121, 143, 0.7) 1.6px, transparent 2px) 0
+      0 / 10px 10px,
+    rgba(255, 244, 214, 0.88);
+}
+.corner {
+  position: absolute;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  pointer-events: none;
+  opacity: 0.95;
+}
+.corner.bl {
+  left: 22px;
+  bottom: 22px;
+  transform: scaleY(-1);
+}
+.corner.br {
+  right: 22px;
+  bottom: 22px;
+  transform: scale(-1, -1);
+}
+.mini {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  color: var(--rose);
+  opacity: 0.42;
+  pointer-events: none;
+}
+.mini.l {
+  left: 29px;
+  top: 46%;
+  transform: rotate(14deg);
+}
+.mini.r {
+  right: 29px;
+  top: 60%;
+  transform: rotate(-20deg) scale(0.85);
+}
 
-  .front {
-    position: absolute; z-index: 2; left: -14px; bottom: 0; width: calc(100% + 28px); height: var(--env-h);
-    display: block; pointer-events: none; filter: drop-shadow(0 -2px 5px rgba(90, 45, 45, 0.16));
-  }
-  /* pen on paper: a hand-written line, an uneven underline and a small doodle */
-  .deco {
-    position: absolute; z-index: 2; left: -14px; bottom: 0; width: calc(100% + 28px); height: var(--env-h);
-    pointer-events: none; color: var(--pen);
-  }
-  .deco-to { position: absolute; left: 0; right: 0; bottom: 26px; text-align: center; transform: translateX(-6px) rotate(-3deg); }
-  .deco-to p {
-    margin: 0; font-family: var(--hand); font-weight: 600;
-    font-size: clamp(2.1rem, 9vw, 2.6rem); line-height: 1; color: var(--pen);
-    opacity: 0.9; mix-blend-mode: multiply; filter: url(#inkFx);
-  }
-  .scribble { display: block; width: 104px; height: auto; margin: 2px auto 0; opacity: 0.75; mix-blend-mode: multiply; transform: rotate(1.5deg); }
-  .heart { position: absolute; right: calc(50% - 92px); bottom: 52px; width: 19px; height: auto; opacity: 0.75; mix-blend-mode: multiply; transform: rotate(11deg); }
+/* once the card is out, the envelope fades away and only the card stays */
+.env-back,
+.front,
+.deco,
+.flap,
+.garnish {
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.pocket.leaving .env-back,
+.pocket.leaving .front,
+.pocket.leaving .deco,
+.pocket.leaving .flap,
+.pocket.leaving .garnish {
+  opacity: 0;
+}
+.pocket.leaving .env-back,
+.pocket.leaving .front,
+.pocket.leaving .deco {
+  transform: translateY(36px);
+}
+.pocket.done {
+  height: auto;
+  transition: none;
+}
+.pocket.done .slot {
+  position: static;
+  height: auto;
+  padding: 0;
+  overflow: visible;
+}
+.pocket.done .card {
+  transform: none;
+  transition: none;
+}
+.pocket.done .env-back,
+.pocket.done .front,
+.pocket.done .deco,
+.pocket.done .flap,
+.pocket.done .seal,
+.pocket.done .garnish {
+  display: none;
+}
 
-  .flap {
-    position: absolute; z-index: 3; left: -14px; bottom: calc(var(--env-h) - 150px); width: calc(100% + 28px); height: 150px;
-    display: block; transform-origin: 50% 0; pointer-events: none; will-change: transform;
-    filter: drop-shadow(0 4px 5px rgba(90, 45, 45, 0.28));
-  }
-  .flap .face-in { opacity: 0; transition: opacity 0.2s linear 0.35s; }
-  .flap .face-out { transition: opacity 0.2s linear 0.35s; }
-  .pocket.open .flap { animation: flap-open 0.8s ease-in-out forwards; }
-  .pocket.open .flap .face-in { opacity: 1; }
-  .pocket.open .flap .face-out { opacity: 0; }
+.front {
+  position: absolute;
+  z-index: 2;
+  left: -14px;
+  bottom: 0;
+  width: calc(100% + 28px);
+  height: var(--env-h);
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 -2px 5px rgba(90, 45, 45, 0.16));
+}
+/* pen on paper: a hand-written line, an uneven underline and a small doodle */
+.deco {
+  position: absolute;
+  z-index: 2;
+  left: -14px;
+  bottom: 0;
+  width: calc(100% + 28px);
+  height: var(--env-h);
+  pointer-events: none;
+  color: var(--pen);
+}
+.deco-to {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 26px;
+  text-align: center;
+  transform: translateX(-6px) rotate(-3deg);
+}
+.deco-to p {
+  margin: 0;
+  font-family: var(--hand);
+  font-weight: 600;
+  font-size: clamp(2.1rem, 9vw, 2.6rem);
+  line-height: 1;
+  color: var(--pen);
+  opacity: 0.9;
+  mix-blend-mode: multiply;
+  filter: url(#inkFx);
+}
+.stamp {
+  position: absolute;
+  right: 12px;
+  bottom: 128px;
+  width: 44px;
+  height: 54px;
+  transform: rotate(4deg);
+  filter: drop-shadow(0 1px 1.5px rgba(90, 45, 45, 0.3));
+}
+.postmark {
+  position: absolute;
+  right: 34px;
+  bottom: 140px;
+  width: 80px;
+  height: 44px;
+  color: var(--pen);
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  transform: rotate(-6deg);
+}
 
-  .seal {
-    position: absolute; z-index: 4; left: 50%; bottom: 72px; width: 96px; height: 96px; margin-left: -48px;
-    border: 0; padding: 0; background: transparent; cursor: pointer; border-radius: 50%;
-    filter: drop-shadow(1px 5px 4px rgba(70, 20, 25, 0.45));
-    transform: rotate(-8deg);
-    transition: transform 0.25s ease;
-  }
-  .seal svg { width: 100%; height: 100%; display: block; }
-  .seal:hover { transform: rotate(-4deg) scale(1.03); }
-  .seal:focus-visible { outline: 3px solid var(--rose); outline-offset: 4px; }
-  .pocket.open .seal { pointer-events: none; animation: seal-away 0.5s ease forwards; }
+/* overhanging flowers, a small bloom on the bottom edge and sparkles on the table */
+.garnish {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.g-sprig {
+  position: absolute;
+  width: 74px;
+  height: 74px;
+}
+.g-bl {
+  left: -24px;
+  bottom: -20px;
+  transform: scaleY(-1);
+}
+.g-tr {
+  right: -24px;
+  bottom: calc(var(--env-h) - 52px);
+  transform: scaleX(-1);
+}
+.g-bloomleaf {
+  position: absolute;
+  right: 6px;
+  bottom: -14px;
+  width: 56px;
+  height: 22px;
+  color: #d9798f;
+  transform: rotate(-8deg);
+}
+.g-spark {
+  position: absolute;
+  color: var(--rose);
+  opacity: 0.7;
+  width: 12px;
+  height: 12px;
+  animation: twinkle 3s ease-in-out infinite;
+}
+.g-spark.a {
+  left: 10%;
+  bottom: calc(var(--env-h) + 12px);
+}
+.g-spark.b {
+  left: 34%;
+  bottom: calc(var(--env-h) + 26px);
+  width: 8px;
+  height: 8px;
+  animation-delay: 0.8s;
+}
+.g-spark.c {
+  right: 16%;
+  bottom: calc(var(--env-h) + 14px);
+  width: 10px;
+  height: 10px;
+  animation-delay: 1.6s;
+}
+.pocket.open .g-spark {
+  opacity: 0;
+  animation: none;
+  transition: opacity 0.3s ease;
+}
+.scribble {
+  display: block;
+  width: 104px;
+  height: auto;
+  margin: 2px auto 0;
+  opacity: 0.75;
+  mix-blend-mode: multiply;
+  transform: rotate(1.5deg);
+}
+.heart {
+  position: absolute;
+  right: calc(50% - 92px);
+  bottom: 52px;
+  width: 19px;
+  height: auto;
+  opacity: 0.75;
+  mix-blend-mode: multiply;
+  transform: rotate(11deg);
+}
 
-  .hint { text-align: center; font-size: 1.05rem; letter-spacing: 0.05em; color: rgba(74, 34, 48, 0.62); margin: 0; }
+.flap {
+  position: absolute;
+  z-index: 3;
+  left: -14px;
+  bottom: calc(var(--env-h) - 150px);
+  width: calc(100% + 28px);
+  height: 150px;
+  display: block;
+  transform-origin: 50% 0;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 4px 5px rgba(90, 45, 45, 0.28));
+}
+.flap .face-in {
+  opacity: 0;
+  transition: opacity 0.2s linear 0.35s;
+}
+.flap .face-out {
+  transition: opacity 0.2s linear 0.35s;
+}
+.pocket.open .flap {
+  animation: flap-open 0.8s ease-in-out forwards;
+}
+.pocket.open .flap .face-in {
+  opacity: 1;
+}
+.pocket.open .flap .face-out {
+  opacity: 0;
+}
 
-  .petals { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 20; }
-  .petal {
-    position: absolute; top: -24px; width: 14px; height: 18px; border-radius: 80% 0 80% 0;
-    background: linear-gradient(135deg, #ee9aae, #c4506f); opacity: 0.9;
-    animation: fall var(--dur) linear var(--delay) forwards;
-  }
+.seal {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 72px;
+  width: 96px;
+  height: 96px;
+  margin-left: -48px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+  filter: drop-shadow(1px 5px 4px rgba(70, 20, 25, 0.45));
+  transform: rotate(-8deg);
+  transition: transform 0.25s ease;
+}
+.seal svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.seal:hover {
+  transform: rotate(-4deg) scale(1.03);
+}
+.seal:focus-visible {
+  outline: 3px solid var(--rose);
+  outline-offset: 4px;
+}
+.pocket.open .seal {
+  pointer-events: none;
+  animation: seal-away 0.5s ease forwards;
+}
 
-  @keyframes flap-open {
-    0% { transform: perspective(1100px) rotateX(0deg); z-index: 3; }
-    49% { z-index: 3; }
-    50% { z-index: 0; }
-    100% { transform: perspective(1100px) rotateX(180deg); z-index: 0; }
+.hint {
+  text-align: center;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  color: rgba(74, 34, 48, 0.62);
+  margin: 0;
+}
+
+.petals {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 20;
+}
+.petal {
+  position: absolute;
+  top: -24px;
+  width: 14px;
+  height: 18px;
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, #ee9aae, #c4506f);
+  opacity: 0.9;
+  will-change: transform;
+  animation: fall var(--dur) linear var(--delay) forwards;
+}
+
+@keyframes flap-open {
+  0% {
+    transform: perspective(1100px) rotateX(0deg);
+    z-index: 3;
   }
-  @keyframes seal-away {
-    0% { transform: rotate(-8deg) scale(1); opacity: 1; }
-    35% { transform: rotate(-8deg) scale(1.18) translateY(-4px); opacity: 1; }
-    100% { transform: rotate(-8deg) scale(0.5) translateY(-30px); opacity: 0; }
+  49% {
+    z-index: 3;
   }
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-  @keyframes fall {
-    0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0.95; }
-    100% { transform: translate3d(var(--drift), 108vh, 0) rotate(var(--spin)); opacity: 0.85; }
+  50% {
+    z-index: 0;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .stage, .pocket, .card, .seal, .env-back, .front, .deco, .flap, .flap .face-in, .flap .face-out { transition: none; }
-    .pocket.open .flap, .pocket.open .seal, .note { animation-duration: 0.01s; }
+  100% {
+    transform: perspective(1100px) rotateX(180deg);
+    z-index: 0;
   }
+}
+@keyframes seal-away {
+  0% {
+    transform: rotate(-8deg) scale(1);
+    opacity: 1;
+  }
+  35% {
+    transform: rotate(-8deg) scale(1.18) translateY(-4px);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-8deg) scale(0.5) translateY(-30px);
+    opacity: 0;
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(var(--drift), 108vh, 0) rotate(var(--spin));
+    opacity: 0.85;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .pocket,
+  .card,
+  .seal,
+  .env-back,
+  .front,
+  .deco,
+  .flap,
+  .flap .face-in,
+  .flap .face-out {
+    transition: none;
+  }
+  .pocket.open .flap,
+  .pocket.open .seal,
+  .note {
+    animation-duration: 0.01s;
+  }
+  .spark,
+  .g-spark {
+    animation: none;
+    opacity: 0.7;
+  }
+  .garnish {
+    transition: none;
+  }
+  .note,
+  .note > h2,
+  .note > p {
+    transition: none;
+  }
+}
